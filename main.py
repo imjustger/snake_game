@@ -43,8 +43,10 @@ def draw_snake(snake_block, snake_list):
 
 # Display game over message
 def message(msg, color):
-    mesg = font_style.render(msg, True, color)
-    screen.blit(mesg, [SCREEN_WIDTH / 6, SCREEN_HEIGHT / 3])
+    small_font_style = pygame.font.SysFont(None, 30)  # Use a smaller font size
+    mesg = small_font_style.render(msg, True, color)
+    mesg_rect = mesg.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))  # Center the text
+    screen.blit(mesg, mesg_rect)
 
 # Main game loop
 def gameLoop():
