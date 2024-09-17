@@ -48,6 +48,12 @@ def message(msg, color):
     mesg_rect = mesg.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))  # Center the text
     screen.blit(mesg, mesg_rect)
 
+# Define direction constants
+UP = 'UP'
+DOWN = 'DOWN'
+LEFT = 'LEFT'
+RIGHT = 'RIGHT'
+
 # Main game loop
 def gameLoop():
     game_over = False
@@ -58,6 +64,8 @@ def gameLoop():
 
     x1_change = 0
     y1_change = 0
+
+    current_direction = RIGHT  # Start the snake heading to the right
 
     snake_list = []
     snake_length = 1
@@ -86,18 +94,23 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                # Check direction and prevent turning to the opposite direction
+                if event.key == pygame.K_LEFT and current_direction != RIGHT:
                     x1_change = -SNAKE_SIZE
                     y1_change = 0
-                elif event.key == pygame.K_RIGHT:
+                    current_direction = LEFT
+                elif event.key == pygame.K_RIGHT and current_direction != LEFT:
                     x1_change = SNAKE_SIZE
                     y1_change = 0
-                elif event.key == pygame.K_UP:
+                    current_direction = RIGHT
+                elif event.key == pygame.K_UP and current_direction != DOWN:
                     y1_change = -SNAKE_SIZE
                     x1_change = 0
-                elif event.key == pygame.K_DOWN:
+                    current_direction = UP
+                elif event.key == pygame.K_DOWN and current_direction != UP:
                     y1_change = SNAKE_SIZE
                     x1_change = 0
+                    current_direction = DOWN
 
         # Check if the snake hits the boundary
         if x1 >= SCREEN_WIDTH or x1 < 0 or y1 >= SCREEN_HEIGHT or y1 < 0:
@@ -116,6 +129,7 @@ def gameLoop():
         if len(snake_list) > snake_length:
             del snake_list[0]
 
+        # Check if the snake collides with itself
         for x in snake_list[:-1]:
             if x == snake_head:
                 game_close = True
