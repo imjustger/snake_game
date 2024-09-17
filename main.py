@@ -12,6 +12,8 @@ BLACK = (0, 0, 0)
 RED = (213, 50, 80)
 GREEN = (0, 255, 0)
 BLUE = (50, 153, 213)
+LIGHT_BLUE = (173, 216, 230)
+DARK_GREEN = (0, 100, 0)
 
 # Screen dimensions
 SCREEN_WIDTH = 600
@@ -48,11 +50,61 @@ def message(msg, color):
     mesg_rect = mesg.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))  # Center the text
     screen.blit(mesg, mesg_rect)
 
+# Button rendering function
+def button(msg, x, y, w, h, inactive_color, active_color, action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(screen, active_color, (x, y, w, h))
+        if click[0] == 1 and action is not None:
+            action()
+    else:
+        pygame.draw.rect(screen, inactive_color, (x, y, w, h))
+
+    small_text = pygame.font.SysFont("comicsansms", 20)
+    text_surf = small_text.render(msg, True, WHITE)
+    text_rect = text_surf.get_rect(center=((x + (w / 2)), (y + (h / 2))))
+    screen.blit(text_surf, text_rect)
+
+# Main menu function
+def game_menu():
+    menu = True
+
+    while menu:
+        screen.fill(BLACK)
+        large_text = pygame.font.SysFont("comicsansms", 50)
+        text_surf = large_text.render("Snake Game", True, WHITE)
+        text_rect = text_surf.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
+        screen.blit(text_surf, text_rect)
+
+        button_width = 150
+        button_height = 50
+
+        # Center the Play and Exit buttons
+        button_x = (SCREEN_WIDTH / 2) - (button_width / 2)
+        
+        # Play button at y = 200 and Exit button at y = 300
+        button("Play", button_x, 200, button_width, button_height, GREEN, DARK_GREEN, gameLoop)
+        button("Exit", button_x, 300, button_width, button_height, RED, BLUE, quit_game)
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
 # Define direction constants
 UP = 'UP'
 DOWN = 'DOWN'
 LEFT = 'LEFT'
 RIGHT = 'RIGHT'
+
+# Quit game function
+def quit_game():
+    pygame.quit()
+    quit()
 
 # Main game loop
 def gameLoop():
@@ -158,4 +210,5 @@ def gameLoop():
     pygame.quit()
     quit()
 
-gameLoop()
+# Start the game with the menu
+game_menu()
