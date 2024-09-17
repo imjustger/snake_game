@@ -117,7 +117,7 @@ def gameLoop():
     x1_change = 0
     y1_change = 0
 
-    current_direction = RIGHT  # Start the snake heading to the right
+    current_direction = None  # Start with no direction, waiting for key press
     direction_locked = False  # Prevent quick direction changes in the same frame
 
     snake_list = []
@@ -147,7 +147,7 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.KEYDOWN and not direction_locked:  # Allow direction change only if not locked
-                # Check direction and prevent turning to the opposite direction
+                # Ignore the opposite direction check when the snake hasn't started moving (current_direction is None)
                 if event.key == pygame.K_LEFT and current_direction != RIGHT:
                     x1_change = -SNAKE_SIZE
                     y1_change = 0
