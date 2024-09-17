@@ -41,7 +41,7 @@ def draw_snake(snake_block, snake_list):
     for x in snake_list:
         pygame.draw.rect(screen, GREEN, [x[0], x[1], snake_block, snake_block])
 
-# Display game over message
+# Display game over message, now centered and with a smaller font
 def message(msg, color):
     small_font_style = pygame.font.SysFont(None, 30)  # Use a smaller font size
     mesg = small_font_style.render(msg, True, color)
@@ -66,6 +66,7 @@ def gameLoop():
     y1_change = 0
 
     current_direction = RIGHT  # Start the snake heading to the right
+    direction_locked = False  # Prevent quick direction changes in the same frame
 
     snake_list = []
     snake_length = 1
@@ -93,24 +94,28 @@ def gameLoop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and not direction_locked:  # Allow direction change only if not locked
                 # Check direction and prevent turning to the opposite direction
                 if event.key == pygame.K_LEFT and current_direction != RIGHT:
                     x1_change = -SNAKE_SIZE
                     y1_change = 0
                     current_direction = LEFT
+                    direction_locked = True  # Lock direction change until next movement
                 elif event.key == pygame.K_RIGHT and current_direction != LEFT:
                     x1_change = SNAKE_SIZE
                     y1_change = 0
                     current_direction = RIGHT
+                    direction_locked = True
                 elif event.key == pygame.K_UP and current_direction != DOWN:
                     y1_change = -SNAKE_SIZE
                     x1_change = 0
                     current_direction = UP
+                    direction_locked = True
                 elif event.key == pygame.K_DOWN and current_direction != UP:
                     y1_change = SNAKE_SIZE
                     x1_change = 0
                     current_direction = DOWN
+                    direction_locked = True
 
         # Check if the snake hits the boundary
         if x1 >= SCREEN_WIDTH or x1 < 0 or y1 >= SCREEN_HEIGHT or y1 < 0:
@@ -146,6 +151,9 @@ def gameLoop():
             snake_length += 1
 
         clock.tick(SNAKE_SPEED)
+
+        # Unlock direction change after moving the snake
+        direction_locked = False  # Once snake has moved, unlock direction change
 
     pygame.quit()
     quit()
